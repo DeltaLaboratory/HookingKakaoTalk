@@ -20,15 +20,20 @@ BYTE jmp[] = {0xE9, 0x00, 0x00, 0x00, 0x00};
 
 void PrintMethod(char* method) {
     time_t tmp;
-    struct tm* ti;
+    struct tm* timeinfo;
+    char buffer[80];
     time(&tmp);
-    ti = localtime(&tmp);
-    std::cout << "Time : " << asctime(ti);
+    timeinfo = localtime(&tmp);
+    strftime(buffer, sizeof(buffer), "%d-%m-%Y %H:%M:%S", timeinfo);
+    std::string timetext(buffer);
+    std::cout << "Time : " << timetext << std::endl;
     std::cout << "Method : " << method << std::endl;
 }
 
 void PrintBodyHex(char* body, LPDWORD size)
 {
+    //ping 보내면 뒤지더라
+    if (body == NULL) return;
     std::vector<std::uint8_t> buffer(body, body + (size_t)size);
     json decoded_body = json::from_bson(buffer);
     std::cout << "Body : " << decoded_body.dump() << std::endl << std::endl;
