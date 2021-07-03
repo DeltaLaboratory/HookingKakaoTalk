@@ -1,8 +1,8 @@
-#include"pch.h"
-#include<windows.h>
-#include<stdio.h>
-#include<iostream>
-#include<string>
+#include "pch.h"
+#include <windows.h>
+#include <stdio.h>
+#include <iostream>
+#include <string>
 #include <vector>
 #include <ctime>
 #include <nlohmann/json.hpp>
