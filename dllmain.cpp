@@ -1,6 +1,16 @@
-﻿#include "pch.h"
-#include <windows.h>
-#include <stdio.h>
+#include"pch.h"
+#include<windows.h>
+#include<stdio.h>
+#include<iostream>
+#include<string>
+#include <vector>
+#include <ctime>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+using std::vector;
+using std::cout;
+using std::endl;
 
 DWORD SendHookAddress = 0xD39018; // E8 ?? ?? ?? ?? 84 C0 0F 84 ?? ?? ?? ?? 8B 46 38
 DWORD SendCallAddress = 0xD3C660;
@@ -9,19 +19,19 @@ DWORD SendReturnAddress = 0xD3901D;
 BYTE jmp[] = {0xE9, 0x00, 0x00, 0x00, 0x00};
 
 void PrintMethod(char* method) {
-    printf("Method: %.10s", method);
-    printf("\n");
+    time_t tmp;
+    struct tm* ti;
+    time(&tmp);
+    ti = localtime(&tmp);
+    std::cout << "Time : " << asctime(ti);
+    std::cout << "Method : " << method << std::endl;
 }
 
 void PrintBodyHex(char* body, LPDWORD size)
 {
-    printf("Body:");
-
-    for (int i = 0; i < (int)size; i++) {
-        printf(" %02hhX", (unsigned char)body[i]);
-    }
-
-    printf("\n\n");
+    std::vector<std::uint8_t> buffer(body, body + (size_t)size);
+    json decoded_body = json::from_bson(buffer);
+    std::cout << "Body : " << decoded_body.dump() << std::endl << std::endl;
 }
 
 DWORD Hook(LPVOID lpFunction)
