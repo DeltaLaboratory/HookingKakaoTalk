@@ -5,28 +5,37 @@
 #include <string>
 #include <vector>
 #include <ctime>
-#include <nlohmann/json.hpp>
+#include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
 using std::vector;
 using std::cout;
 using std::endl;
 
-DWORD SendHookAddress = 0xD39018; // E8 ?? ?? ?? ?? 84 C0 0F 84 ?? ?? ?? ?? 8B 46 38
-DWORD SendCallAddress = 0xD3C660;
-DWORD SendReturnAddress = 0xD3901D;
+DWORD SendHookAddress = 0xD39018 + 0x220; // E8 ?? ?? ?? ?? 84 C0 0F 84 ?? ?? ?? ?? 8B 46 38
+DWORD SendCallAddress = 0xD3C660 + 0x220;
+DWORD SendReturnAddress = 0xD3901D + 0x220;
 
 BYTE jmp[] = {0xE9, 0x00, 0x00, 0x00, 0x00};
 
+char* GetTimeStamp()
+{
+    char* buffer = (char*)malloc(sizeof(char) * 25);
+    time_t timer;
+    struct tm t;
+
+    timer = time(NULL);
+    localtime_s(&t, &timer);
+
+    sprintf_s(buffer, 25, "[%04d-%02d-%02dT%02d:%02d:%02d]",
+        t.tm_year + 1900, t.tm_mon + 1, t.tm_mday,
+        t.tm_hour, t.tm_min, t.tm_sec);
+
+    return buffer;
+}
+
 void PrintMethod(char* method) {
-    time_t tmp;
-    struct tm* timeinfo;
-    char buffer[80];
-    time(&tmp);
-    timeinfo = localtime(&tmp);
-    strftime(buffer, sizeof(buffer), "%d-%m-%Y %H:%M:%S", timeinfo);
-    std::string timetext(buffer);
-    std::cout << "Time : " << timetext << std::endl;
+    std::cout << "Time : " << GetTimeStamp() << std::endl;
     std::cout << "Method : " << method << std::endl;
 }
 
